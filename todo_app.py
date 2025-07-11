@@ -9,7 +9,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for styling
+# Custom CSS for styling with black text in inputs and task details
 st.markdown("""
 <style>
     :root {
@@ -26,19 +26,41 @@ st.markdown("""
         min-height: 100vh;
     }
     
+    /* Input fields with black text */
     .stTextInput>div>div>input, 
     .stDateInput>div>div>input,
     .stSelectbox>div>div>select,
     .stTextArea>div>div>textarea {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        color: white !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        color: black !important;
         border-radius: 10px !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
     }
     
-    /* Fix for text visibility */
+    /* Placeholder text */
+    .stTextInput input::placeholder,
+    .stTextArea textarea::placeholder {
+        color: #555 !important;
+    }
+    
+    /* Active task details text */
     .todo-item, .todo-item * {
-        color: #ffffff !important;
+        color: black !important;
+    }
+    
+    .task-description {
+        color: rgba(0, 0, 0, 0.85) !important;
+        margin: 8px 0;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+    
+    .task-details {
+        display: flex;
+        gap: 15px;
+        margin-top: 8px;
+        font-size: 0.9em;
+        color: rgba(0, 0, 0, 0.75) !important;
     }
     
     .stButton>button {
@@ -57,17 +79,16 @@ st.markdown("""
     }
     
     .todo-item {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.85) !important;
         border-radius: 15px;
         padding: 15px;
         margin: 10px 0;
         transition: all 0.3s ease;
         border-left: 4px solid var(--accent);
-        color: #ffffff;
     }
     
     .todo-item:hover {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.95) !important;
         transform: translateX(5px);
     }
     
@@ -112,23 +133,6 @@ st.markdown("""
         font-size: 5rem;
         margin-bottom: 20px;
         opacity: 0.5;
-    }
-    
-    /* Fix for description display */
-    .task-description {
-        color: rgba(255, 255, 255, 0.85) !important;
-        margin: 8px 0;
-        font-size: 0.95rem;
-        line-height: 1.4;
-    }
-    
-    /* Style for task details */
-    .task-details {
-        display: flex;
-        gap: 15px;
-        margin-top: 8px;
-        font-size: 0.9em;
-        color: rgba(255, 255, 255, 0.75) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -226,9 +230,11 @@ for todo in st.session_state.todos:
                 <h4>{todo['task']}</h4>
             """
             
-            # Add description if it exists
+            # Add description if it exists (blank if empty)
             if todo.get('description') and todo['description'].strip() != "":
                 details_content += f"""<div class="task-description">{todo['description']}</div>"""
+            else:
+                details_content += """<div class="task-description" style="color:transparent!important">.</div>"""
             
             # Add task metadata
             priority_icon = "🔴" if todo['priority'] == "High" else "🟡" if todo['priority'] == "Medium" else "🟢"
@@ -267,14 +273,26 @@ for todo in st.session_state.completed:
         with col1:
             completion_time = todo.get("completed_time", datetime.now())
             time_str = completion_time.strftime("%b %d, %I:%M %p")
-            st.markdown(f"""
+            
+            details_content = f"""
             <div class="todo-item completed">
                 <h4 style="text-decoration: line-through;">{todo['task']}</h4>
+            """
+            
+            # Add description if it exists (blank if empty)
+            if todo.get('description') and todo['description'].strip() != "":
+                details_content += f"""<div class="task-description" style="text-decoration:line-through">{todo['description']}</div>"""
+            else:
+                details_content += """<div class="task-description" style="color:transparent!important;text-decoration:line-through">.</div>"""
+            
+            details_content += f"""
                 <div class="task-details">
                     <span>🎉 Completed: {time_str}</span>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """
+            
+            st.markdown(details_content, unsafe_allow_html=True)
         with col2:
             if st.button("🗑️", key=f"del_completed_{todo['id']}", help="Delete task"):
                 delete_todo(todo['id'], completed=True)
