@@ -142,6 +142,9 @@ if 'todos' not in st.session_state:
     st.session_state.todos = []
 if 'completed' not in st.session_state:
     st.session_state.completed = []
+# Add unique ID counter
+if 'next_id' not in st.session_state:
+    st.session_state.next_id = 1
 
 # Initialize form fields in session state
 if 'new_todo' not in st.session_state:
@@ -157,7 +160,7 @@ if 'due_date' not in st.session_state:
 def add_todo():
     if st.session_state.new_todo.strip() != "":
         new_task = {
-            "id": len(st.session_state.todos) + 1,
+            "id": st.session_state.next_id,
             "task": st.session_state.new_todo,
             "date": st.session_state.due_date,
             "priority": st.session_state.priority_level,
@@ -166,6 +169,8 @@ def add_todo():
             "description": st.session_state.task_description
         }
         st.session_state.todos.append(new_task)
+        st.session_state.next_id += 1  # Increment ID for next item
+        
         # Reset form fields
         st.session_state.new_todo = ""
         st.session_state.task_description = ""
