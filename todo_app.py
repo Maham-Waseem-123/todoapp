@@ -36,6 +36,11 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
     }
     
+    /* Fix for text visibility */
+    .todo-item, .todo-item * {
+        color: #ffffff !important;
+    }
+    
     .stButton>button {
         background: linear-gradient(to right, var(--accent), #92fe9d) !important;
         color: var(--dark) !important;
@@ -58,6 +63,7 @@ st.markdown("""
         margin: 10px 0;
         transition: all 0.3s ease;
         border-left: 4px solid var(--accent);
+        color: #ffffff;
     }
     
     .todo-item:hover {
@@ -99,12 +105,21 @@ st.markdown("""
         text-align: center;
         padding: 40px;
         opacity: 0.7;
+        color: rgba(255, 255, 255, 0.8);
     }
     
     .empty-state i {
         font-size: 5rem;
         margin-bottom: 20px;
         opacity: 0.5;
+    }
+    
+    /* Fix for description display */
+    .task-description {
+        color: rgba(255, 255, 255, 0.85) !important;
+        margin: 8px 0;
+        font-size: 0.95rem;
+        line-height: 1.4;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -114,6 +129,16 @@ if 'todos' not in st.session_state:
     st.session_state.todos = []
 if 'completed' not in st.session_state:
     st.session_state.completed = []
+
+# Initialize form fields in session state
+if 'new_todo' not in st.session_state:
+    st.session_state.new_todo = ""
+if 'task_description' not in st.session_state:
+    st.session_state.task_description = ""
+if 'priority_level' not in st.session_state:
+    st.session_state.priority_level = "Medium"
+if 'due_date' not in st.session_state:
+    st.session_state.due_date = datetime.now().date() + timedelta(days=7)
 
 # Add new todo
 def add_todo():
@@ -130,9 +155,9 @@ def add_todo():
         st.session_state.todos.append(new_task)
         # Reset form fields
         st.session_state.new_todo = ""
-        st.session_state.due_date = datetime.now().date() + timedelta(days=7)
-        st.session_state.priority_level = "Medium"
         st.session_state.task_description = ""
+        st.session_state.priority_level = "Medium"
+        st.session_state.due_date = datetime.now().date() + timedelta(days=7)
 
 # Complete todo
 def complete_todo(todo_id):
@@ -163,7 +188,6 @@ with st.expander("➕ Add New Task", expanded=True):
     with cols[0]:
         st.date_input("Due Date", 
                      key="due_date", 
-                     value=datetime.now().date() + timedelta(days=7),
                      min_value=datetime.now().date())
     with cols[1]:
         st.selectbox("Priority", ["High", "Medium", "Low"], key="priority_level")
@@ -195,8 +219,9 @@ for todo in st.session_state.todos:
                 <h4>{todo['task']}</h4>
             """
             
-            if todo.get('description'):
-                content += f"""<p style="opacity:0.8; margin:8px 0;">{todo['description']}</p>"""
+            # Only add description if it exists and is not empty
+            if todo.get('description') and todo['description'].strip() != "":
+                content += f"""<div class="task-description">{todo['description']}</div>"""
             
             content += f"""
                 <div style="display: flex; gap: 15px; margin-top: 8px; font-size:0.9em;">
