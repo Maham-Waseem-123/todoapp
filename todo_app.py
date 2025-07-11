@@ -121,6 +121,15 @@ st.markdown("""
         font-size: 0.95rem;
         line-height: 1.4;
     }
+    
+    /* Style for task details */
+    .task-details {
+        display: flex;
+        gap: 15px;
+        margin-top: 8px;
+        font-size: 0.9em;
+        color: rgba(255, 255, 255, 0.75) !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -211,27 +220,29 @@ for todo in st.session_state.todos:
     with st.container():
         col1, col2, col3 = st.columns([0.7, 0.15, 0.15])
         with col1:
-            due_date = f"📅 {todo['date'].strftime('%b %d, %Y')}" if todo['date'] else ""
-            priority = f"🔹 {todo['priority']}"
-            
-            content = f"""
+            # Create task details
+            details_content = f"""
             <div class="todo-item priority-{todo['priority'].lower()}">
                 <h4>{todo['task']}</h4>
             """
             
-            # Only add description if it exists and is not empty
+            # Add description if it exists
             if todo.get('description') and todo['description'].strip() != "":
-                content += f"""<div class="task-description">{todo['description']}</div>"""
+                details_content += f"""<div class="task-description">{todo['description']}</div>"""
             
-            content += f"""
-                <div style="display: flex; gap: 15px; margin-top: 8px; font-size:0.9em;">
-                    <span>{priority}</span>
-                    <span>{due_date}</span>
+            # Add task metadata
+            priority_icon = "🔴" if todo['priority'] == "High" else "🟡" if todo['priority'] == "Medium" else "🟢"
+            due_date_str = f"📅 {todo['date'].strftime('%b %d, %Y')}" if todo['date'] else ""
+            
+            details_content += f"""
+                <div class="task-details">
+                    <span>{priority_icon} {todo['priority']}</span>
+                    <span>{due_date_str}</span>
                 </div>
             </div>
             """
             
-            st.markdown(content, unsafe_allow_html=True)
+            st.markdown(details_content, unsafe_allow_html=True)
         with col2:
             if st.button("✓", key=f"complete_{todo['id']}", help="Mark as complete"):
                 complete_todo(todo['id'])
@@ -259,7 +270,7 @@ for todo in st.session_state.completed:
             st.markdown(f"""
             <div class="todo-item completed">
                 <h4 style="text-decoration: line-through;">{todo['task']}</h4>
-                <div style="display: flex; gap: 15px; margin-top: 8px; font-size:0.9em;">
+                <div class="task-details">
                     <span>🎉 Completed: {time_str}</span>
                 </div>
             </div>
