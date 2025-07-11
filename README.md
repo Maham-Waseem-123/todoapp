@@ -1,9 +1,8 @@
-# 🚀 Ultimate Todo List Application
+<img width="1114" height="553" alt="image" src="https://github.com/user-attachments/assets/65bc1459-0f82-4f92-946f-d44e219bed8c" /># 🚀 Ultimate Todo List Application
 
 A beautifully designed, feature-rich todo list application built with Streamlit. Organize your tasks with priority levels, due dates, and descriptions - all with a stunning gradient UI.
 
-![Todo App Screenshot](https://via.placeholder.com/800x450/4a00e0/ffffff?text=Todo+App+Screenshot)  
-*Add real screenshot after deployment*
+<img width="1114" height="553" alt="image" src="https://github.com/user-attachments/assets/950802c6-64bf-4616-a8a5-d3a87e9daf2d" />
 
 ## ✨ Features
 
