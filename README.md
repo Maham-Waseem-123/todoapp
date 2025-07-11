@@ -3,7 +3,6 @@
 A beautifully designed, feature-rich todo list application built with Streamlit. Organize your tasks with priority levels, due dates, and descriptions - all with a stunning gradient UI.
 
 
-A beautifully designed, feature-rich todo list application built with Streamlit. Organize your tasks with priority levels, due dates, and descriptions - all with a stunning gradient UI.
 
 <img width="1114" height="553" alt="image" src="https://github.com/user-attachments/assets/950802c6-64bf-4616-a8a5-d3a87e9daf2d" />
 
